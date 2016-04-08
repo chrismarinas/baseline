@@ -1,0 +1,71 @@
+---
+
+- name: Install MySQL
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+   - mysql-server
+
+- name: Enable MySQL upon startup
+  service:
+    name: "mysqld"
+    state: started
+    enabled: yes
+
+# Ensure remote server can communicate with MySQL leveraging python
+- name: Install requirements that allow Ansible to work with mysql
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python-iniparse
+    - MySQL-python
+
+- name: Create dba user
+  mysql_user:
+    name: "{{ dba_username }}"
+    password: "{{ dba_password }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
+    host: "{{ item }}"
+  with_items:
+    - localhost
+    - 127.0.0.1
+    - ::1
+    - "{{ ansible_hostname }}"
+
+- name: Setup /root/.my.cnf for seamless auth in MySQL
+  template:
+    src: "root/my.cnf.j2"
+    dest: "/root/.my.cnf"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Delete root mysql users
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    state: absent
+  with_items:
+    - localhost
+    - 127.0.0.1
+    - ::1
+    - "{{ ansible_hostname }}"
+
+- name: Delete empty mysql users
+  mysql_user:
+    name: ""
+    host: "{{ item }}"
+    state: absent
+  with_items:
+    - localhost
+    - 127.0.0.1
+    - ::1
+    - "{{ ansible_hostname }}"
+
+- name: Delete test database
+  mysql_db:
+    name: test
+    state: absent

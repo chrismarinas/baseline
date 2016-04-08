@@ -1,0 +1,9 @@
+<VirtualHost *:80>
+	ServerName localhost
+	DocumentRoot "/var/www/html/default"
+
+	<Directory "/var/www/html/default">
+		Options All -Indexes
+		AllowOverride All
+	</Directory>
+</VirtualHost>

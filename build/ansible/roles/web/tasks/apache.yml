@@ -1,0 +1,38 @@
+---
+
+- name: Install apache and modules
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - httpd
+    - mod_ssl
+  tags:
+    - httpd
+
+- name: add "vagrant" user to the "apache" group
+  user:
+    name: "vagrant"
+    groups: "apache"
+    append: yes
+
+- name: Install apache configuration
+  template:
+    src: "etc/httpd/conf/httpd.conf.j2"
+    dest: "/etc/httpd/conf/httpd.conf"
+
+- name: Create default web folder
+  file:
+    path: "/var/www/html/default"
+    state: directory
+
+- name: Set default index file
+  template:
+    src: "var/www/html/default/index.php.j2"
+    dest: "/var/www/html/default/index.php"
+
+- name: Enable default conf
+  template:
+    src: "etc/httpd/conf.d/default.conf.j2"
+    dest: "/etc/httpd/conf.d/default.conf"
+  notify: restart httpd

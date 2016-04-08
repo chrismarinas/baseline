@@ -1,0 +1,62 @@
+---
+
+- name: Install EPEL for yum
+  yum:
+    name: "http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
+    state: present
+
+- name: Install remi for yum
+  yum:
+    name: "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm"
+    state: present
+
+- name: Enable remi and remi-php55
+  ini_file:
+    dest: "/etc/yum.repos.d/remi.repo"
+    section: "{{ item }}"
+    option: enabled
+    value: 1
+  with_items:
+    - remi
+    - remi-php55
+
+- name: Install common packages
+  yum: name={{ item }} state=latest
+  with_items:
+    - curl
+    - unzip
+    - libselinux-python
+    - man
+    - openssl
+    - rsync
+    - screen
+    - vim
+    - wget
+
+- name: Make selinux permissive for development
+  selinux:
+    policy: targeted
+    state: permissive
+
+- name: Disable iptables for development
+  service:
+    name: iptables
+    state: stopped
+    enabled: no
+
+- name: Install development tools
+  yum:
+    name: "@Development tools"
+    state: present
+
+- name: Add vagrant bashrc
+  template:
+    src: "home/bashrc.j2"
+    dest: "/home/vagrant/.bashrc"
+    owner: vagrant
+    group: vagrant
+
+- name: Add /root/.bashrc
+  template:
+    src: "root/bashrc.j2"
+    dest: "/root/.bashrc"
