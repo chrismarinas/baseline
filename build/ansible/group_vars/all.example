@@ -1,0 +1,13 @@
+---
+
+# default database settings
+dba_username: dba
+dba_password: dba
+
+# jacl settings
+jacl_webroot: /var/www/html/jacl
+jacl_db: acl
+
+# svn credentials
+svn_username: svnuser
+svn_password: svnpass

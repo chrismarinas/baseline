@@ -36,3 +36,8 @@
     src: "etc/httpd/conf.d/default.conf.j2"
     dest: "/etc/httpd/conf.d/default.conf"
   notify: restart httpd
+
+- name: Add vagrant.dev to host file
+  lineinfile:
+    dest: "/etc/hosts"
+    line: "127.0.0.1 vagrant.dev"
