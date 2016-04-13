@@ -10,8 +10,11 @@ A basic dev environment setup that includes the following:
 ## Setup
 
 1. Rename `build/ansible/group_vars/all.example` to `build/ansible/group_vars/all.yml`.
+
 2. Update values in `group_vars/all.yml` as needed.
+
 3. Run _vagrant up_ from docroot.
+
 4. Add the following to your `/etc/hosts` file:
 
     ```
